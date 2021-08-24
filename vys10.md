@@ -1,48 +1,43 @@
+# VYS10
+
 BSM211 Veritabanı Yönetim Sistemleri - Celal ÇEKEN, İsmail ÖZTEL, Veysel Harun ŞAHİN
 
-# İleri SQL(Alt Sorgular, IN, ANY, ALL, İlintili Sorgular, UNION, INTERSECT, EXCEPT, Hareket/İşlem (Transaction))
+## İleri SQL\(Alt Sorgular, IN, ANY, ALL, İlintili Sorgular, UNION, INTERSECT, EXCEPT, Hareket/İşlem \(Transaction\)\)
 
-
-## Konular
+### Konular
 
 * Alt Sorgu
 * UNION ve UNION ALL
 * INTERSECT
 * EXCEPT
-* Hareket/İşlem (Transaction)
+* Hareket/İşlem \(Transaction\)
 
-
-## Alt Sorgu
+### Alt Sorgu
 
 * Burada verilen örnekler NorthWind veritabanının aşağıdaki şeması ile ilgilidir.
 
+![](.gitbook/assets/NorthWind.png)
 
-![](Sekiller/10/NorthWind.png)
+#### WHERE ile Alt Sorgu \(Tek Değer Döndüren\) Kullanımı
 
-
-
-### WHERE ile Alt Sorgu (Tek Değer Döndüren) Kullanımı 
-
-* WHERE ifadesinde yalnızca =, !=, <, > gibi operatörler kullanılıyor ise alt sorgular sonucunda tek alan ve tek satır dönmeli ve veri tipi uygun olmalı. Aksi halde hata verir.
-
+* WHERE ifadesinde yalnızca =, !=, &lt;, &gt; gibi operatörler kullanılıyor ise alt sorgular sonucunda tek alan ve tek satır dönmeli ve veri tipi uygun olmalı. Aksi halde hata verir.
 * Çoklu satır fonksiyonlarından geriye tek değer döndürüldüğü için alt sorgu içerisinde bu tür fonksiyonlar kullanılabilir.
-
 * Alt sorgudaki koşul içerisinde birincil anahtar kullanılarak alt sorgudan tek değer döndürülmesi garanti edilebilir.
 
-~~~sql
+```sql
 SELECT AVG("UnitPrice") FROM "products";
-~~~
+```
 
-~~~sql
+```sql
 SELECT "ProductID", "UnitPrice" FROM "products"
 WHERE "UnitPrice" < (SELECT AVG("UnitPrice") FROM "products");
-~~~
+```
 
-~~~sql
+```sql
 SELECT "ProductID" FROM "products" WHERE "ProductName" = 'Y Z Bilgisayar';
-~~~
+```
 
-~~~sql
+```sql
 SELECT DISTINCT "public"."customers"."CustomerID",
   "public"."customers"."CompanyName",
   "public"."customers"."ContactName"
@@ -52,30 +47,28 @@ INNER JOIN "order_details" ON "order_details"."OrderID" = "orders"."OrderID"
 WHERE "order_details"."ProductID" =
   (SELECT "ProductID" FROM "products" WHERE "ProductName" = 'Y Z Bilgisayar')
 ORDER BY "public"."customers"."CustomerID";
-~~~
+```
 
-### WHERE ile Alt Sorgu (Çok Değer Döndüren) Kullanımı 
+#### WHERE ile Alt Sorgu \(Çok Değer Döndüren\) Kullanımı
 
 * Alt sorgudan çok değer dönmesi durumunda IN, ANY ve ALL ifadeleri kullanılmalıdır.
-
-
 * IN ifadesi, sorgulanan değerin, alt sorgudan dönen değerler kümesi içerisinde olup olmadığını araştırmak için kullanılır.
 
-~~~sql
+```sql
 SELECT "SupplierID" FROM "products" WHERE "UnitPrice" > 18;
-~~~
+```
 
-~~~sql
+```sql
 SELECT * FROM "suppliers"
 WHERE "SupplierID" IN
   (SELECT "SupplierID" FROM "products" WHERE "UnitPrice" > 18);
-~~~
+```
 
-~~~sql
+```sql
 SELECT "ProductID" FROM "products" WHERE "ProductName" LIKE 'A%';
-~~~
+```
 
-~~~sql
+```sql
 SELECT DISTINCT "public"."customers"."CustomerID",
   "public"."customers"."CompanyName",
   "public"."customers"."ContactName"
@@ -84,37 +77,32 @@ INNER JOIN "customers" ON "orders"."CustomerID" = "customers"."CustomerID"
 INNER JOIN "order_details" ON "order_details"."OrderID" = "orders"."OrderID"
 WHERE "order_details"."ProductID" IN
   (SELECT "ProductID" FROM "products" WHERE "ProductName" LIKE 'A%');
-~~~
+```
 
-~~~sql
+```sql
 UPDATE "orders"
 SET "ShipCountry" = 'Mexico'
 WHERE "CustomerID" IN
   (SELECT "CustomerID" FROM "customers" WHERE "Country" = 'Mexico');
-~~~
+```
 
-~~~sql
+```sql
 DELETE FROM "products"
 WHERE "SupplierID" IN
   (SELECT "SupplierID" FROM "suppliers" WHERE "Country" = 'USA');
-~~~
+```
 
-
-
-### ANY ile Alt Sorgu Kullanımı
+#### ANY ile Alt Sorgu Kullanımı
 
 * Üç türü mevcuttur.
-  + = ANY
-  + \> ANY
-  + < ANY
-
+  * = ANY
+  * &gt; ANY
+  * &lt; ANY
 * = ANY ifadesi, sorgulanan değerin, alt sorgudan dönen değerler kümesinin elemanlarından her hangi birisine eşit olup olmadığını araştırmak için kullanılır.
+* &gt; ANY ifadesi, sorgulanan değerin, alt sorgudan dönen değerler kümesinin elemanlarının her hangi birisinden büyük olup olmadığını araştırmak için kullanılır.
+* &lt; ANY ifadesi, sorgulanan değerin, alt sorgudan dönen değerler kümesinin elemanlarının her hangi birisinden küçük olup olmadığını araştırmak için kullanılır.
 
-* \> ANY ifadesi, sorgulanan değerin, alt sorgudan dönen değerler kümesinin elemanlarının her hangi birisinden büyük olup olmadığını araştırmak için kullanılır.
-
-* < ANY ifadesi, sorgulanan değerin, alt sorgudan dönen değerler kümesinin elemanlarının her hangi birisinden küçük olup olmadığını araştırmak için kullanılır.
-
-~~~sql  
+```sql
 SELECT * FROM "products"
 WHERE "UnitPrice" = ANY
 (
@@ -124,9 +112,9 @@ WHERE "UnitPrice" = ANY
     ON "suppliers"."SupplierID" = "products"."SupplierID"
     WHERE "suppliers"."CompanyName" = 'Tokyo Traders'
 );
-~~~
+```
 
-~~~sql
+```sql
 SELECT * FROM "products"
 WHERE "UnitPrice" IN
 (
@@ -136,9 +124,9 @@ WHERE "UnitPrice" IN
     ON "suppliers"."SupplierID" = "products"."SupplierID"
     WHERE "suppliers"."CompanyName" = 'Tokyo Traders'
 );
-~~~
+```
 
-~~~sql
+```sql
 SELECT * FROM "products"
 WHERE "UnitPrice" < ANY
 (
@@ -148,9 +136,9 @@ WHERE "UnitPrice" < ANY
     ON "suppliers"."SupplierID" = "products"."SupplierID"
     WHERE "suppliers"."CompanyName" = 'Tokyo Traders'
 );
-~~~
+```
 
-~~~sql
+```sql
 SELECT * FROM "products"
 WHERE "UnitPrice" > ANY 
 (
@@ -160,21 +148,17 @@ WHERE "UnitPrice" > ANY
     ON "suppliers"."SupplierID" = "products"."SupplierID"
     WHERE "suppliers"."CompanyName" = 'Tokyo Traders'
 );
-~~~
+```
 
-
-
-### ALL ile Alt Sorgu Kullanımı
+#### ALL ile Alt Sorgu Kullanımı
 
 * İki türü mevcuttur.
-  + \> ALL
-  + < ALL
+  * &gt; ALL
+  * &lt; ALL
+* &gt; ALL ifadesi, sorgulanan değerin, alt sorgudan dönen değerler kümesinin elemanlarının tamamından büyük olup olmadığını araştırmak için kullanılır.
+* &lt; ALL ifadesi, sorgulanan değerin, alt sorgudan dönen değerler kümesinin elemanlarının tamamından küçük olup olmadığını araştırmak için kullanılır.
 
-* \> ALL ifadesi, sorgulanan değerin, alt sorgudan dönen değerler kümesinin elemanlarının tamamından büyük olup olmadığını araştırmak için kullanılır.
-
-* < ALL ifadesi, sorgulanan değerin, alt sorgudan dönen değerler kümesinin elemanlarının tamamından küçük olup olmadığını araştırmak için kullanılır.
-
-~~~sql
+```sql
 SELECT * FROM "products"
 WHERE "UnitPrice" < ALL
 (
@@ -184,9 +168,9 @@ WHERE "UnitPrice" < ALL
     ON "suppliers"."SupplierID" = "products"."SupplierID"
     WHERE "suppliers"."CompanyName" = 'Tokyo Traders'
 );
-~~~
+```
 
-~~~sql
+```sql
 SELECT * FROM "products"
 WHERE "UnitPrice" > ALL 
 (
@@ -196,209 +180,186 @@ WHERE "UnitPrice" > ALL
     ON "suppliers"."SupplierID" = "products"."SupplierID"
     WHERE "suppliers"."CompanyName" = 'Tokyo Traders'
 );
-~~~
+```
 
+#### HAVING ile Alt Sorgu Kullanımı
 
-### HAVING ile Alt Sorgu Kullanımı 
-
-~~~sql
+```sql
 SELECT AVG("UnitsInStock") FROM "products";
-~~~
+```
 
-~~~sql
+```sql
 SELECT "SupplierID", SUM("UnitsInStock") AS "stoktakiToplamUrunSayisi"
 FROM  "products"
 GROUP BY "SupplierID"
 HAVING SUM("UnitsInStock") < (SELECT AVG("UnitsInStock") FROM "products");
-~~~
+```
 
-~~~sql
+```sql
 SELECT MAX("Quantity") FROM "order_details";
-~~~
+```
 
-~~~sql
+```sql
 SELECT "ProductID", SUM("Quantity")
 FROM "order_details"
 GROUP BY "ProductID"
 HAVING SUM("Quantity") > (SELECT MAX("Quantity") FROM "order_details");
-~~~
+```
 
-
-
-### Satır İçi (Inline) Alt Sorgu Kullanımı
+#### Satır İçi \(Inline\) Alt Sorgu Kullanımı
 
 * Alt sorgular sonucunda tek alan ve tek satır dönmeli. Aksi halde hata verir.
 
-~~~sql
+```sql
 SELECT
   "ProductName",
   "UnitsInStock",
   (SELECT MAX("UnitsInStock") FROM "products") AS "enBuyukDeger"
 FROM "products";
-~~~
+```
 
-~~~sql
+```sql
 SELECT
   "SupplierID",
   COUNT("UnitsInStock") AS "toplam",
   SQRT(SUM(("UnitsInStock" - (SELECT AVG("UnitsInStock") FROM "products")) ^ 2) / COUNT("UnitsInStock"))  AS "standartSapma"
 FROM "products"
 GROUP BY "SupplierID";
-~~~
+```
 
 * Standart sapma hesaplanırken “Toplam” takma ismi kullanılmamalı.
 
-
-
-
-### İlintili (Correlated) Sorgu 
-
+#### İlintili \(Correlated\) Sorgu
 
 * İç içe döngülerdeki gibi dış sorgunun her bir satırı iç sorguya gönderilerek iç sorgunun çalıştırılması sağlanır.
-
 * Aşağıdaki örneğin çalışması şu adımlardan oluşur;
-  + 1. Dış sorgunun birinci satırı seçilir.
-  + 2. İç sorgu çalıştırılır ve dış sorguda seçilen satırın SupplierID değerine sahip olan tüm kayıtların UnitPrice alanlarındaki değerlerin aritmetik ortalaması hesaplanır.
-  + 3. Dış sorgunun birinci satırının UnitPrice alanındaki değer, alt sorguda hesaplanan ortalamadan büyük ise seçilen birinci satır sonuç kümesine eklenir. Değilse eklenmez.
-  + 4. Dış sorgunun ikinci satırı seçilir ve aynı işlem yapılır.
-  + 5. Bu işlemler dış sorgunun tüm satırları için tekrarlanır.
+  * 1. Dış sorgunun birinci satırı seçilir.
+  * 1. İç sorgu çalıştırılır ve dış sorguda seçilen satırın SupplierID değerine sahip olan tüm kayıtların UnitPrice alanlarındaki değerlerin aritmetik ortalaması hesaplanır.
+  * 1. Dış sorgunun birinci satırının UnitPrice alanındaki değer, alt sorguda hesaplanan ortalamadan büyük ise seçilen birinci satır sonuç kümesine eklenir. Değilse eklenmez.
+  * 1. Dış sorgunun ikinci satırı seçilir ve aynı işlem yapılır.
+  * 1. Bu işlemler dış sorgunun tüm satırları için tekrarlanır.
 
-~~~sql  
+```sql
 SELECT "ProductName", "UnitPrice" FROM "products" AS "urunler1"
 WHERE "urunler1"."UnitPrice" >
 (
   SELECT AVG("UnitPrice") FROM "products" AS "urunler2"
   WHERE "urunler1"."SupplierID" = "urunler2"."SupplierID"
 );
-~~~
+```
 
 * EXIST ifadesi ile birlikte başarımı çok iyidir.
-  + Siparişi olan müşterilerin listesi.
+  * Siparişi olan müşterilerin listesi.
+* Alt sorgudaki \* ifadesi yerine herhangi bir alan adı da yazılabilir.
 
-* Alt sorgudaki * ifadesi yerine herhangi bir alan adı da yazılabilir.
-
-~~~sql
+```sql
 SELECT "CustomerID", "CompanyName", "ContactName"
 FROM "customers"
 WHERE EXISTS
   (SELECT * FROM "orders" WHERE "customers"."CustomerID" = "orders"."CustomerID");
-~~~
+```
 
 * Aynı sonuç farklı sorgular ile de bulunabilir. Ancak daha yavaş olur.
 
-~~~sql
+```sql
 SELECT "CustomerID", "CompanyName", "ContactName"
 FROM "customers"
 WHERE "CustomerID" =
   (SELECT DISTINCT "CustomerID" FROM "orders" WHERE "orders"."CustomerID" = "customers"."CustomerID");
-~~~
+```
 
-~~~sql
+```sql
 SELECT "CustomerID", "CompanyName", "ContactName"
 FROM "customers"
 WHERE "CustomerID" IN
   (SELECT "CustomerID" FROM "orders" WHERE "orders"."CustomerID" = "customers"."CustomerID");
-~~~
+```
 
-~~~sql
+```sql
 SELECT DISTINCT "public"."customers"."CompanyName",
   "public"."customers"."ContactName"
 FROM "orders" 
 INNER JOIN "customers"  ON "orders"."CustomerID" = "customers"."CustomerID";
-~~~
-
+```
 
 * Siparişi olmayan müşterilerin listesi.
 
-~~~sql
+```sql
 SELECT "CustomerID", "CompanyName", "ContactName"
 FROM "customers"
 WHERE NOT EXISTS
   (SELECT * FROM "orders" WHERE "customers"."CustomerID" = "orders"."CustomerID");
-~~~
+```
 
-
-## UNION ve UNION ALL 
+### UNION ve UNION ALL
 
 * İki tablonun küme birleşimini alır.
 * Rastgele iki tablonun birleşimi alınamaz.
-  + İki tablonun nitelik sayıları aynı olmalı.
-  + Aynı sıradaki nitelikleri aynı değer alanı üzerinde tanımlanmış olmalıdır.
+  * İki tablonun nitelik sayıları aynı olmalı.
+  * Aynı sıradaki nitelikleri aynı değer alanı üzerinde tanımlanmış olmalıdır.
 * UNION ifadesi ile aynı kayıtlar bir defa gösterilir.
 * UNION ALL ifadesi ile aynı kayıtlar gösterilir.
 
-~~~sql
+```sql
 SELECT "CompanyName", "Country" FROM "customers"
 UNION 
 SELECT "CompanyName", "Country" FROM "suppliers"
 ORDER BY 2;
-~~~
+```
 
-~~~sql
+```sql
 SELECT "CompanyName", "Country" FROM "customers"
 UNION ALL
 SELECT "CompanyName", "Country" FROM "suppliers"
 ORDER BY 2;
-~~~
+```
 
-~~~sql
+```sql
 SELECT "CustomerID" FROM "customers"
 UNION
 SELECT "CustomerID" FROM "orders"
 ORDER BY "CustomerID";
-~~~
+```
 
-
-## INTERSECT 
+### INTERSECT
 
 * İki tablonun küme kesişimi elde edilir.
 * Rasgele iki tablonun kesişimi alınamaz.
-  + İki tablonun nitelik sayıları aynı olmalı. 
-  + Aynı sıradaki nitelikleri aynı değer alanı üzerinde tanımlanmış olmalı.  
+  * İki tablonun nitelik sayıları aynı olmalı. 
+  * Aynı sıradaki nitelikleri aynı değer alanı üzerinde tanımlanmış olmalı.  
 
-~~~sql
+```sql
 SELECT "CompanyName", "Country" FROM "customers"
 INTERSECT
 SELECT "CompanyName", "Country" FROM "suppliers"
 ORDER BY 2;
-~~~
+```
 
-
-
-## EXCEPT
+### EXCEPT
 
 * Bir tablonun diğerinden farkını elde etmek için kullanılır.
 * Rastgele iki tabloya uygulanamaz.
-  + İki tablonun nitelik sayıları aynı olmalı.
-  + Aynı sıradaki nitelikleri aynı değer alanı üzerinde tanımlanmış olmalı.  
+  * İki tablonun nitelik sayıları aynı olmalı.
+  * Aynı sıradaki nitelikleri aynı değer alanı üzerinde tanımlanmış olmalı.  
 
-~~~sql
+```sql
 SELECT "CompanyName", "Country" FROM "customers"
 EXCEPT
 SELECT "CompanyName", "Country" FROM "suppliers"
 ORDER BY 2;
-~~~
+```
 
+### Hareket/İşlem \(Transaction\)
 
-
-## Hareket/İşlem (Transaction)
-
-* Hareket/işlem (transaction) veritabanı yönetim sistemlerinin önemli özelliklerinden birisidir.
-
+* Hareket/işlem \(transaction\) veritabanı yönetim sistemlerinin önemli özelliklerinden birisidir.
 * ACID ile belirtilen ozellikleri destekler.
-
 * ACID ifadesi, Atomicity, Consistency, Isolation ve Durability kelimelerinin ilk harflerinin birleşiminden oluşur. Detayları aşağıda anlatılmıştır.
+* Atomicity \(Atomiklik\): Hareket/işlem \(transaction\) kapsamındaki alt işlemlerin tamamı bir bütün olarak ele alınır. Ya alt işlemlerin tamamı başarılı olarak çalıştırılır, ya da herhangi birinde hata varsa tamamı iptal edilir ve veritabanı eski kararlı haline döndürülür.
+* Consistency \(Tutarlılık\): Herhangi bir kısıt ihlal edilirse roll back işlemiyle veritabanı eski kararlı haline döndürülür.
+* Isolation \(Yalıtım\): İşlemler birbirlerini \(ortak kaynak kullanımı durumunda\) etkilemezler. Kullanılan ortak kaynak işlem tarafından, işlem tamamlanana kadar, kilitlenir.
+* Durability \(Mukavemet\): Sistem tarafından bir hata meydana gelmesi durumunda tamamlanmamış olan işlem sistem çalışmaya başladıktan sonra mutlaka tamamlanır.
 
-* Atomicity (Atomiklik): Hareket/işlem (transaction) kapsamındaki alt işlemlerin tamamı bir bütün olarak ele alınır. Ya alt işlemlerin tamamı başarılı olarak çalıştırılır, ya da herhangi birinde hata varsa tamamı iptal edilir ve veritabanı eski kararlı haline döndürülür. 
-
-* Consistency (Tutarlılık): Herhangi bir kısıt ihlal edilirse roll back işlemiyle veritabanı eski kararlı haline döndürülür.
-
-* Isolation (Yalıtım): İşlemler birbirlerini (ortak kaynak kullanımı durumunda) etkilemezler. Kullanılan ortak kaynak işlem tarafından, işlem tamamlanana kadar, kilitlenir.
-
-* Durability (Mukavemet): Sistem tarafından bir hata meydana gelmesi durumunda tamamlanmamış olan işlem sistem çalışmaya başladıktan sonra mutlaka tamamlanır.
-
-
-~~~sql
+```sql
 BEGIN; -- Harekete (transaction) başla.
 
 INSERT INTO "order_details" ("OrderID", "ProductID", "UnitPrice", "Quantity", "Discount")
@@ -416,9 +377,9 @@ WHERE "ProductID" = 11;
 -- veritabanının durumunu güncelle.
 
 COMMIT; -- Hareketi (transaction) tamamla.
-~~~
+```
 
-~~~sql
+```sql
 BEGIN;
 
 UPDATE Hesap SET bakiye = bakiye - 100.00
@@ -438,4 +399,5 @@ UPDATE Hesap SET bakiye = bakiye + 100.00
 WHERE adi = 'Ayşe';
 
 COMMIT;
-~~~
+```
+
