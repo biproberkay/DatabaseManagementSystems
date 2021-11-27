@@ -73,6 +73,10 @@ Bir araç üreticisi, farklı modellerde araçlar üretmektedir. Ürettiği ara�
 #### Varlık Bağıntı Diyagramı
 
 ![](.gitbook/assets/UBSVBDiyagrami.png)
+### Varlık Bağıntı Diyagramı
+
+![](Sekiller/03/UBSVBDiyagrami.png)
+![](Sekiller/04/CokCokBagintisi.png)
 
 #### Örnek Tablolar
 
