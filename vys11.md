@@ -12,16 +12,20 @@ BSM211 Veritabanı Yönetim Sistemleri - Celal ÇEKEN, İsmail ÖZTEL, Veysel Ha
 * Tetikleyici \(Trigger\)
 * Hazır Fonksiyonlar
 
-> Pagila örnek veritabanını kullanmaktadır.
+
+> Pagila örnek veritabanını kullanmaktadır. (VB Diyagramı: https://dataedo.com/samples/html/Pagila/doc/Pagila_10/modules/Paglia_database_diagram_103/module.html)
 
 ### Fonksiyon \(Function\) / Saklı Yordam \(Stored Procedure\)
 
 * Fonksiyonlar / saklı yordamlar, sistem kataloğunda saklanan SQL ifadeleridir. Fonksiyonlar / saklı yordamlar; uygulama yazılımları, tetikleyici ya da başka bir fonksiyon / saklı yordam tarafından çağrılabilirler.
 
-#### Avantajları
+![](Sekiller/11/WebUygulamaMimarisi.png)
 
-* Uygulamanın başarımını iyileştirir.
-  * Fonksiyonlar / saklı yordamlar, bir defa oluşturulduktan sonra derlenerek sistem kataloğunda saklanır. Her çağrıldıklarında SQL motoru tarafından derlenmek zorunda olan SQL ifadelerine göre çok daha hızlıdır.
+### Avantajları
+
+* Uygulamanın başarımını iyileştirir. 
+  + Fonksiyonlar / saklı yordamlar, bir defa oluşturulduktan sonra derlenerek sistem kataloğunda saklanır. Her çağrıldıklarında SQL motoru tarafından derlenmek zorunda olan SQL ifadelerine göre çok daha hızlıdır. 
+
 * Uygulama ile veritabanı sunucusu arasındaki trafiği azaltır.
   * Uzun SQL ifadeleri yerine fonksiyonun / saklı yordamın adını ve parametrelerini göndermek yeterlidir. Ara sonuçların istemci ve sunucu arasında gönderilmesi önlenir.
 * Yeniden kullanılabilir \(reusable\).

@@ -304,14 +304,19 @@ LEFT OUTER JOIN "Personel" AS "Yonetici" ON "Yonetici"."personelNo" = "Calisan".
 ### Görünüm \(View\)
 
 * Bir veya daha fazla tablodan seçilen satırlar ve alanlardaki bilgilerin yeni bir tablo gibi ele alınmasını temin eden yapıdır.
-* Seçme \(SELECT\) işlemi için kısa yol tanımlar.
-* Tablo\(lar\)dan tüm satırlar seçilebileceği gibi yalnızca belli kriterlere uyan satırlar da seçilebilir.
-* Tablo\(lar\)daki tüm alanlar görünüme dahil edilebileceği gibi yalnızca belli alanlar da görünüme dahil edilebilir.
-* Genellikle karmaşık olan seçme \(SELECT\) işlemlerinde tercih edilir.
-* Dinamiktir. GÖRÜNÜM \(VIEW\) ile oluşturulan tabloya gerçekleştirilen her erişimde kendisini oluşturan ifadeler \(görünüm – view ifadeleri\) yeniden çalıştırılır.
-* Karmaşık sorguları basit hale getirir.
-* Güvenlik nedeniyle de kullanılır.
-  * Örneğin şirket personeli, müşterilerin genel bilgilerini \(ad, soyad, adres v.b.\) görebilsin ancak kredi kartı bilgilerine erişemesin isteniyorsa yalnızca görmesini istediğimiz bilgileri içeren bir görünüm oluşturulabilir ve ilgili personeli bu görünüme yetkilendiririz.
+
+* Seçme (SELECT) işlemi için kısa yol tanımlar.
+
+* Tablo(lar)dan tüm satırlar seçilebileceği gibi yalnızca belli kriterlere uyan satırlar da seçilebilir.
+
+* Tablo(lar)daki tüm alanlar görünüme dahil edilebileceği gibi yalnızca belli alanlar da görünüme dahil edilebilir.
+
+* Genellikle, karmaşık olan seçme (SELECT) işlemlerini basit hale getirmek için kullanılır.
+
+* Dinamiktir. GÖRÜNÜM (VIEW) ile oluşturulan tabloya gerçekleştirilen her erişimde kendisini oluşturan ifadeler (görünüm – view ifadeleri) yeniden çalıştırılır.
+
+* Güvenliği sağlamak amacıyla da kullanılır.
+  + Örneğin şirket personeli, müşterilerin genel bilgilerini (ad, soyad, adres v.b.) görebilsin ancak kredi kartı bilgilerine erişemesin isteniyorsa yalnızca görmesini istediğimiz bilgileri içeren bir görünüm oluşturulabilir ve ilgili personeli bu görünüme yetkilendiririz.
 
 > Aşağıdaki sorgular NorthWind Örnek Veritabanını Kullanmaktadır.
 
@@ -438,10 +443,15 @@ SELECT AVG("UnitPrice") FROM "products";
 
 #### GROUP BY
 
-* Sorgu sonucunu belirtilen alan\(lar\)a göre gruplar.
-* Seçilecek alan, gruplama yapılan alan ya da çoklu satır fonksiyonları \(COUNT\) olmalı.
-* Gruplama işleminden sonra koşul yazılabilmesi için HAVING ifadesinin kullanılması gereklidir.
-* Aşağıdaki sorgu, ü̈rünleri tedarikçilerine göre gruplar ve her tedarikçinin sağladığı ürünlerin sayısını hesaplayarak tedarikçi bilgisi ile birlikte döndürür.
+## Gruplama
+
+### GROUP BY
+
+* Sorgu sonucunu belirtilen alan(lar)a göre gruplayarak oluşturur.
+* Gruplama işleminde seçilecek alan, gruplama yapılan alan ya da çoklu satır fonksiyonları (COUNT, SUM, AVG vb.) olmalıdır.
+
+
+* Aşağıdaki sorgu, ü̈rünleri tedarikçilerine (SupplierID) göre gruplar ve her tedarikçinin sağladığı ürünlerin sayısını (COUNT) hesaplayarak tedarikçi bilgisi ile birlikte döndürür.
 
 ```sql
 SELECT "SupplierID", COUNT("SupplierID") AS "urunSayisi"
@@ -455,7 +465,8 @@ FROM "products"
 GROUP BY "SupplierID";
 ```
 
-```sql
+* Aşağıdaki sorgu, siparişleri müşteri firma adına (CompanyName) göre gruplar ve her müşterinin satın aldığı ürün sayısını (COUNT) ve bu ürünlerin toplam (SUM) birim fiyatını hesaplar.
+~~~sql
 SELECT "customers"."CompanyName", COUNT("orders"."OrderID"), SUM("products"."UnitPrice")
 FROM "orders" 
 INNER JOIN "customers" ON "orders"."CustomerID" = "customers"."CustomerID" 
@@ -467,8 +478,9 @@ ORDER BY 1;
 
 #### HAVING
 
-* Gruplandırılmış veriler üzerinde filtreleme yapmak için kullanılır.
-* HAVING ile yazılan koşullar çoklu satır fonksiyonları ile veya gruplama yapılan alan üzerinden yapılır.
+* Gruplandırılmış veriler üzerinde filtreleme yapmak için kullanılır. 
+* Gruplama işleminden sonra koşul yazılabilmesi için WHERE yerine HAVING ifadesinin kullanılması gereklidir.
+* HAVING ile yazılan koşullar içerisinde çoklu satır fonksiyonları veya gruplama yapılan alan kullanılabilir.
 
 ```sql
 SELECT "SupplierID", COUNT("SupplierID") AS "urunSayisi"
